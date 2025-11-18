@@ -1,0 +1,112 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  slug: string;
+  tags?: string[];
+  readingTime?: number;
+}
+
+const { title, description, date, slug, tags = [], readingTime } = Astro.props;
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}).format(date);
+---
+
+<article class="blog-card" data-astro-transition-scope={`post-${slug}`}>
+  <a href={`/blog/${slug}`} class="card-link">
+    <div class="card-content">
+      <h2 class="card-title">{title}</h2>
+      <p class="card-description">{description}</p>
+      <div class="card-meta">
+        <time datetime={date.toISOString()} class="card-date">
+          {formattedDate}
+        </time>
+        {readingTime && (
+          <span class="reading-time">{readingTime} min read</span>
+        )}
+      </div>
+      {tags.length > 0 && (
+        <div class="card-tags">
+          {tags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </a>
+</article>
+
+<style>
+  .blog-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .card-content {
+    padding: 2rem;
+  }
+
+  .card-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    line-height: 1.3;
+  }
+
+  .card-description {
+    margin: 0 0 1rem 0;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  .card-date {
+    font-weight: 500;
+  }
+
+  .reading-time {
+    color: #999;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: #f0f0f0;
+    color: #8B0000;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+</style>
+

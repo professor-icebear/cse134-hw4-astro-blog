@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import TagList from '../../components/TagList.astro';
+
+// Get all blog posts
+const postModules = import.meta.glob('../../content/blog/*.md');
+const posts = await Promise.all(
+  Object.entries(postModules).map(async ([filePath, postModule]) => {
+    const post = await postModule();
+    const fileName = filePath.split('/').pop() || '';
+    const slug = fileName.replace('.md', '');
+    return {
+      ...post.frontmatter,
+      slug,
+      date: new Date(post.frontmatter.date)
+    };
+  })
+);
+const sortedPosts = posts.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+// Extract all unique tags
+const allTags = Array.from(
+  new Set(sortedPosts.flatMap((post) => post.tags || []))
+).sort();
+---
+
+<BaseLayout title="Blog - Tech Blog" description="All blog posts about web development and technology">
+  <h1 class="page-title">Blog</h1>
+  <p class="page-description">
+    Explore our collection of articles on web development, technology, and best practices.
+  </p>
+
+  <TagList tags={allTags} />
+
+  <div class="posts-grid">
+    {sortedPosts.map((post) => (
+      <BlogCard
+        title={post.title}
+        description={post.description}
+        date={post.date}
+        slug={post.slug}
+        tags={post.tags}
+        readingTime={post.readingTime}
+      />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .page-description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+

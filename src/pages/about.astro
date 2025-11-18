@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="About - Tech Blog" 
+  description="Learn more about this blog and its mission"
+>
+  <article class="about-page" data-astro-transition-scope="about">
+    <h1>About This Blog</h1>
+    
+    <section>
+      <h2>Our Mission</h2>
+      <p>
+        This blog is dedicated to exploring the latest trends in web development,
+        sharing knowledge about modern technologies, and documenting best practices
+        in software engineering. We believe in creating content that is both
+        educational and practical.
+      </p>
+    </section>
+
+    <section>
+      <h2>Built with Astro</h2>
+      <p>
+        This site is built using <strong>Astro</strong>, a modern static site generator
+        that delivers lightning-fast performance by shipping minimal JavaScript to the
+        browser. Astro allows us to:
+      </p>
+      <ul>
+        <li>Generate static HTML at build time for optimal performance</li>
+        <li>Use components from any framework (React, Vue, Svelte, etc.)</li>
+        <li>Leverage the View Transition API for smooth page transitions</li>
+        <li>Create reusable layouts and components for consistent design</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>View Transitions</h2>
+      <p>
+        This site implements the <strong>View Transition API</strong> to provide
+        seamless transitions between pages. Notice how smoothly content transitions
+        when navigating between different pages - this is powered by Astro's built-in
+        View Transitions support.
+      </p>
+      <p>
+        The View Transition API allows for smooth, app-like transitions in a
+        multi-page application (MPA) context, providing a better user experience
+        without the complexity of a single-page application (SPA).
+      </p>
+    </section>
+
+    <section>
+      <h2>Get in Touch</h2>
+      <p>
+        Have questions or suggestions? Feel free to explore our blog posts or
+        reach out through your preferred channel.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about-page {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    line-height: 1.8;
+  }
+
+  .about-page h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .about-page section {
+    margin-bottom: 2.5rem;
+  }
+
+  .about-page h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+  }
+
+  .about-page p {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  .about-page ul {
+    margin-left: 2rem;
+    margin-top: 1rem;
+  }
+
+  .about-page li {
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  @media (max-width: 768px) {
+    .about-page {
+      padding: 1.5rem;
+    }
+
+    .about-page h1 {
+      font-size: 2rem;
+    }
+  }
+</style>
+

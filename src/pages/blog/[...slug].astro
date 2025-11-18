@@ -1,0 +1,43 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+
+// This will handle all blog post routes
+export async function getStaticPaths() {
+  const postModules = import.meta.glob('../../content/blog/*.md');
+  
+  const paths = [];
+  for (const [filePath, postModule] of Object.entries(postModules)) {
+    const post = await postModule();
+    // Extract slug from file path
+    // filePath will be something like: ../../content/blog/getting-started-with-astro.md
+    const fileName = filePath.split('/').pop() || '';
+    const slug = fileName.replace('.md', '');
+    
+    paths.push({
+      params: { slug },
+      props: {
+        post: {
+          frontmatter: post.frontmatter,
+          Content: post.Content
+        }
+      }
+    });
+  }
+  
+  return paths;
+}
+
+const { post } = Astro.props;
+const { frontmatter, Content } = post;
+---
+
+<BlogLayout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  date={new Date(frontmatter.date)}
+  tags={frontmatter.tags}
+  readingTime={frontmatter.readingTime}
+>
+  <Content />
+</BlogLayout>
+

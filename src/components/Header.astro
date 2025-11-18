@@ -1,0 +1,93 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+---
+
+<ViewTransitions />
+<header class="header">
+  <nav class="nav">
+    <a href="/" class="logo" data-astro-transition-scope="header">
+      <span class="logo-text">Tech Blog</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/" data-astro-transition-scope="header">Home</a></li>
+      <li><a href="/blog" data-astro-transition-scope="header">Blog</a></li>
+      <li><a href="/about" data-astro-transition-scope="header">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .header {
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    transition: opacity 0.2s;
+  }
+
+  .logo:hover {
+    opacity: 0.8;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+    position: relative;
+  }
+
+  .nav-links a:hover {
+    opacity: 0.8;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: white;
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .nav {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      gap: 1.5rem;
+    }
+  }
+</style>
+

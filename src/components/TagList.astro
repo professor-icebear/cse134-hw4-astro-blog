@@ -1,0 +1,61 @@
+---
+interface Props {
+  tags: string[];
+  activeTag?: string;
+}
+
+const { tags, activeTag } = Astro.props;
+---
+
+<div class="tag-list">
+  <a 
+    href="/blog" 
+    class={`tag-item ${!activeTag ? 'active' : ''}`}
+    data-astro-transition-scope="tags"
+  >
+    All
+  </a>
+  {tags.map((tag) => (
+    <a
+      href={`/blog/tag/${tag.toLowerCase()}`}
+      class={`tag-item ${activeTag === tag.toLowerCase() ? 'active' : ''}`}
+      data-astro-transition-scope="tags"
+    >
+      {tag}
+    </a>
+  ))}
+</div>
+
+<style>
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .tag-item {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    text-decoration: none;
+    color: #666;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+
+  .tag-item:hover {
+    border-color: #8B0000;
+    color: #8B0000;
+    transform: translateY(-2px);
+  }
+
+  .tag-item.active {
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 100%);
+    border-color: #8B0000;
+    color: white;
+  }
+</style>
+

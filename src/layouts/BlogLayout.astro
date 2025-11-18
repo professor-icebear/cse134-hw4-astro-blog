@@ -1,0 +1,151 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  date?: Date;
+  tags?: string[];
+  readingTime?: number;
+}
+
+const { title, description, date, tags = [], readingTime } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="blog-post" data-astro-transition-scope="blog-content">
+    <header class="post-header">
+      <h1 class="post-title">{title}</h1>
+      {description && <p class="post-description">{description}</p>}
+      {(date || tags.length > 0 || readingTime) && (
+        <div class="post-meta">
+          {date && (
+            <time datetime={date.toISOString()} class="post-date">
+              {new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              }).format(date)}
+            </time>
+          )}
+          {readingTime && (
+            <span class="post-reading-time">{readingTime} min read</span>
+          )}
+          {tags.length > 0 && (
+            <div class="post-tags">
+              {tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </header>
+    <div class="post-content">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-post {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+  }
+
+  .post-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .post-description {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 1rem;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #888;
+  }
+
+  .post-date {
+    font-weight: 500;
+  }
+
+  .post-reading-time {
+    color: #999;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .post-content {
+    line-height: 1.8;
+    color: #333;
+  }
+
+  .post-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+  }
+
+  .post-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-content p {
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content ul,
+  .post-content ol {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .post-content blockquote {
+    border-left: 4px solid #8B0000;
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    color: #666;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .blog-post {
+      padding: 1.5rem;
+    }
+
+    .post-title {
+      font-size: 2rem;
+    }
+  }
+</style>
+

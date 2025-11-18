@@ -1,0 +1,142 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import TagList from '../../../components/TagList.astro';
+
+// Get all blog posts to extract unique tags
+export async function getStaticPaths() {
+  const postModules = import.meta.glob('../../../content/blog/*.md');
+  const allPostsData = await Promise.all(
+    Object.entries(postModules).map(async ([filePath, postModule]) => {
+      const post = await postModule();
+      return {
+        ...post.frontmatter,
+        date: new Date(post.frontmatter.date)
+      };
+    })
+  );
+
+  // Extract all unique tags
+  const allTags = Array.from(
+    new Set(allPostsData.flatMap((post) => post.tags || []))
+  ).sort();
+
+  // Generate paths for each tag
+  return allTags.map((tag) => ({
+    params: { tag: tag.toLowerCase() }
+  }));
+}
+
+const { tag } = Astro.params;
+
+// Get all blog posts
+const postModules = import.meta.glob('../../../content/blog/*.md');
+const allPostsData = await Promise.all(
+  Object.entries(postModules).map(async ([filePath, postModule]) => {
+    const post = await postModule();
+    const fileName = filePath.split('/').pop() || '';
+    const slug = fileName.replace('.md', '');
+    return {
+      ...post.frontmatter,
+      slug,
+      date: new Date(post.frontmatter.date)
+    };
+  })
+);
+const sortedAllPosts = allPostsData.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+// Filter posts by tag
+const posts = sortedAllPosts.filter((post) =>
+  post.tags?.some((t) => t.toLowerCase() === tag?.toLowerCase())
+);
+
+// Extract all unique tags
+const allTags = Array.from(
+  new Set(sortedAllPosts.flatMap((post) => post.tags || []))
+).sort();
+---
+
+<BaseLayout 
+  title={`${tag} - Blog - Tech Blog`} 
+  description={`Blog posts tagged with ${tag}`}
+>
+  <h1 class="page-title">Tag: {tag}</h1>
+  <p class="page-description">
+    {posts.length} {posts.length === 1 ? 'post' : 'posts'} tagged with "{tag}"
+  </p>
+
+  <TagList tags={allTags} activeTag={tag} />
+
+  {posts.length > 0 ? (
+    <div class="posts-grid">
+      {posts.map((post) => (
+        <BlogCard
+          title={post.title}
+          description={post.description}
+          date={post.date}
+          slug={post.slug}
+          tags={post.tags}
+          readingTime={post.readingTime}
+        />
+      ))}
+    </div>
+  ) : (
+    <div class="no-posts">
+      <p>No posts found for this tag.</p>
+      <a href="/blog" class="btn-primary">View All Posts</a>
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  .page-description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 12px;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+

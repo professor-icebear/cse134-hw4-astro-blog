@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogCard from '../components/BlogCard.astro';
+
+// Get all blog posts
+const postModules = import.meta.glob('../content/blog/*.md');
+const allPosts = await Promise.all(
+  Object.entries(postModules).map(async ([filePath, postModule]) => {
+    const post = await postModule();
+    const fileName = filePath.split('/').pop() || '';
+    const slug = fileName.replace('.md', '');
+    return {
+      ...post.frontmatter,
+      slug,
+      date: new Date(post.frontmatter.date)
+    };
+  })
+);
+const posts = allPosts
+  .sort((a, b) => b.date.getTime() - a.date.getTime())
+  .slice(0, 3); // Show latest 3 on homepage
+---
+
+<BaseLayout title="Tech Blog - Home" description="A modern blog about web development, technology, and more">
+  <section class="hero" data-astro-transition-scope="hero">
+    <h1 class="hero-title">Welcome to Tech Blog</h1>
+    <p class="hero-subtitle">
+      Exploring the latest in web development, technology trends, and best practices.
+      Built with Astro for blazing-fast performance.
+    </p>
+  </section>
+
+  <section class="featured-posts">
+    <h2 class="section-title">Latest Posts</h2>
+    <div class="posts-grid">
+      {posts.map((post) => (
+        <BlogCard
+          title={post.title}
+          description={post.description}
+          date={post.date}
+          slug={post.slug}
+          tags={post.tags}
+          readingTime={post.readingTime}
+        />
+      ))}
+    </div>
+    <div class="view-all">
+      <a href="/blog" class="btn-primary" data-astro-transition-scope="hero">
+        View All Posts →
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    margin-bottom: 4rem;
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 100%);
+    border-radius: 16px;
+    color: white;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.95;
+  }
+
+  .featured-posts {
+    margin-top: 3rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .view-all {
+    text-align: center;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
